@@ -1,0 +1,54 @@
+DataBase 1 ----->>>::::>>>>
+
+1. How do you find all documents where the field "item" is "Mochas"?
+A.> db.sales.find({ "item": "Mochas" });
+2. How do you find all items who are less than 15 of price?
+A.>db.sales.find({ "price": { $lt: 15 } });
+3. How do you find items who are either less than 10 or greater than 20?
+A.>db.sales.find({$or: [{ "price": { $lt: 10 } },{ "price": { $gt: 20 } }]});
+4. How do you find all documents where the quantity field exists?
+A.>db.sales.find({ "quantity": { $exists: true } });
+
+DataBase 2 ------>>>>:::::::>>>>>>
+5. How do you find all documents where the color array contains the value "white"?
+A.>db.products.find({ "color": "white" });
+6. How do you update the ram of the user named "xTablet" to 24?
+A.>db.products.updateOne({ "name": "xTablet" },{ $set: { "spec.ram": 24 } });
+
+Updated ->{
+  _id: 2,
+  name: 'xTablet',
+  price: 899,
+  releaseDate: 2011-09-01T00:00:00.000Z,
+  spec: {
+    ram: 24,
+    screen: 9.5,
+    cpu: 3.66
+  },
+
+7. How do you find all products and only return their 'spec' field?
+A.>db.products.find({}, { "spec": 1, "_id": 0 });
+
+8. How do you find all products and sort them by their price in descending order?
+A.>db.products.find({}).sort({ "price": -1 });
+
+9. How do you find the first 2 products, skipping the first one?
+A.>db.products.find({}).skip(1).limit(2);  
+
+10. How do you find all users whose name starts with the letter "S" and price should be greater of 700?
+A.>db.products.find({"name": { $regex: /^S/, $options: "i" },"price": { $gt: 700 }});
+
+11. How do you calculate the total price of all items? {For DB1}
+A.>db.sales.aggregate([{$group: {_id: null,totalPrice: { $sum: { $multiply: ["$price", "$quantity"] } }}}]);
+
+12.How do you project only the size field for each items?{For DB1}
+db.sales.find({}, { "size": 1, "_id": 0 });
+
+13. How do you find items who are Tall size &  group them by item wise?{For DB1}
+A.>db.sales.aggregate([{$match: { "size": "Tall" }},{$group: {_id: "$item",totalQuantity: { $sum: "$quantity" },totalSales: { $sum: { $multiply: ["$price", "$quantity"] } }}}]);
+
+14. How do you find the second item when sorted by price in ascending order?{For DB1}
+A.>db.sales.find().sort({ "price": 1 }).skip(1).limit(1);
+
+15. How do you group by items and calculate the total number of items and average price in a single aggregation?{For DB1}
+A.>db.sales.aggregate([{$group: {_id: "$item",totalItems: { $sum: 1 },avgPrice: { $avg: "$price" }}}]);
